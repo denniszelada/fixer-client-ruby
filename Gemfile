@@ -8,6 +8,13 @@ gem 'rake'
 
 gem 'multi_json'
 
+# database
+gem 'sequel'
+gem 'pg'
+
+# environment
+gem 'dotenv'
+
 group :development do
   gem 'pry'
   gem 'pry-byebug'

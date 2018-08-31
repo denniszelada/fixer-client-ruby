@@ -3,32 +3,30 @@
 module Spider
   module Frankfurter
     module Repositories
-      # Exchange rates 
+      # Exchange rate Repository
       class ExchangeRate
 
-        def initialize(exchange_rates)
-          @exchante_rates = exchange_rates
+        def save(base:, date:, exchange_currencies:)
+          exchange_rates = map_exchange_rates(base: base, date: date, exchange_currencies: exchange_currencies)
+          stored_exchange_rates = model.create(exchange_rates)
+          stored_exchange_rates.id
         end
 
-        def save
+        private
 
+        def map_exchange_rates(base:, date:, exchange_currencies:)
+          exchange_rates = {}
+          exchange_rates["created_at"] = Time.now
+          exchange_rates["date"]       = date
+          exchange_rates["base"]       = base
+          exchange_rates.merge!(exchange_currencies.sort.to_h)
+          exchange_rates
         end
 
-        def save_exchange_currencies(exchange_rates)
-          # p 'base'
-          base = json_exchange_currencies['base']
-          json_exchange_currencies['rates'].each do |key, hash|
-            # data_object = Fixer::DataObjects::ExchangeRate.new(hash)
-            save_exchange_currency(base: base, date: key, exchange_currencies: hash)
-          end
+        def model
+          Spider::Frankfurter::Models::ExchangeRate
         end
-
-        def save_exchange_currency(base:, date:, exchange_currencies:)
-          exchange_rates = exchange_currencies
-          exchange_rates[:date] = date
-          exchange_rates[:base] = base
-        end
-      end 
+      end
     end
   end
 end

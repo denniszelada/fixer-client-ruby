@@ -10,7 +10,7 @@ module Spider
         def run
           result = exchange_currencies
           parsed_currencies = parse_exchange_currencies(result)
-          save_exchange_currencies(parsed_currencies)
+          save_exchange_rates(parsed_currencies)
         end
 
         def exchange_currencies
@@ -23,8 +23,11 @@ module Spider
           JSON.parse(currencies)
         end
 
-        def save_exchange_currencies(exchange_currencies_parsed)
-          exchange_currency(exchange_currencies_parsed).save
+        def save_exchange_rates(exchange_currencies_parsed)
+           base = exchange_currencies_parsed['base']
+          exchange_currencies_parsed['rates'].each do |key, hash|
+            exchange_rate.save(base: base, date: key, exchange_currencies: hash)
+          end
         end
 
         def date_range(start_date, end_date)
@@ -35,8 +38,8 @@ module Spider
           Spider::Frankfurter::Repositories::TimeSeriesCurrencyExchange.new(date_range)
         end
 
-        def exchance_currency(exchanged_currencies_parsed)
-          Spider::Frankfurter::Repositories::ExchangeCurrency.new(exchanged_currencies_parsed)
+        def exchange_rate
+          Spider::Frankfurter::Repositories::ExchangeRate.new()
         end
       end
     end
